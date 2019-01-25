@@ -1,0 +1,14 @@
+diff --git a/meta-qt5/recipes-qt/qt5/qtmultimedia_git.bb b/meta-qt5/recipes-qt/qt5/qtmultimedia_git.bb
+index faf05d4..e8497bc 100644
+--- a/meta-qt5/recipes-qt/qt5/qtmultimedia_git.bb
++++ b/meta-qt5/recipes-qt/qt5/qtmultimedia_git.bb
+@@ -29,7 +29,8 @@ EXTRA_QMAKEVARS_PRE += "${@bb.utils.contains('PACKAGECONFIG', 'openal', '', 'CON
+ EXTRA_QMAKEVARS_PRE += "${@bb.utils.contains('PACKAGECONFIG', 'gstreamer', 'GST_VERSION=1.0', '', d)}"
+ EXTRA_QMAKEVARS_PRE += "${@bb.utils.contains('PACKAGECONFIG', 'gstreamer010', 'GST_VERSION=0.10', '', d)}"
+ # Disable GStreamer if completely disabled
+-EXTRA_QMAKEVARS_PRE += "${@bb.utils.contains_any('PACKAGECONFIG', 'gstreamer gstreamer010', '', 'CONFIG+=done_config_gstreamer', d)}"
++EXTRA_QMAKEVARS_PRE += "${@bb.utils.contains('PACKAGECONFIG', 'gstreamer', '', 'CONFIG+=done_config_gstreamer', d)}"
++EXTRA_QMAKEVARS_PRE += "${@bb.utils.contains('PACKAGECONFIG', 'gstreamer010', '', 'CONFIG+=done_config_gstreamer', d)}"
+ 
+ SRC_URI += "\
+      file://0001-Initial-porting-effort-to-GStreamer-1.0.patch \

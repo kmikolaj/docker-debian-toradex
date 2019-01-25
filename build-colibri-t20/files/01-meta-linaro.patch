@@ -1,0 +1,79 @@
+diff --git a/meta-linaro-toolchain/recipes-core/eglibc/eglibc-linaro-2.19/eglibc-disable-neon.patch b/meta-linaro-toolchain/recipes-core/eglibc/eglibc-linaro-2.19/eglibc-disable-neon.patch
+new file mode 100644
+index 0000000..6c2abfb
+--- /dev/null
++++ b/meta-linaro-toolchain/recipes-core/eglibc/eglibc-linaro-2.19/eglibc-disable-neon.patch
+@@ -0,0 +1,14 @@
++diff -Nur a/ports/sysdeps/arm/armv7/multiarch/memcpy_neon.S b/ports/sysdeps/arm/armv7/multiarch/memcpy_neon.S
++--- a/ports/sysdeps/arm/armv7/multiarch/memcpy_neon.S	2018-04-26 12:17:53.562924093 +0200
+++++ b/ports/sysdeps/arm/armv7/multiarch/memcpy_neon.S	2018-04-26 13:56:01.136415590 +0200
++@@ -1,9 +1,9 @@
++ #ifdef __ARM_NEON__
++ /* Under __ARM_NEON__, this file defines memcpy directly.  */
++ libc_hidden_builtin_def (memcpy)
+++# define MEMCPY_NEON
++ #else
++ # define memcpy __memcpy_neon
++ #endif
++ 
++-#define MEMCPY_NEON
++ #include "memcpy_impl.S"
+diff --git a/meta-linaro-toolchain/recipes-core/eglibc/eglibc_linaro-2.19.bb b/meta-linaro-toolchain/recipes-core/eglibc/eglibc_linaro-2.19.bb
+index 8aae1c5..57f0821 100644
+--- a/meta-linaro-toolchain/recipes-core/eglibc/eglibc_linaro-2.19.bb
++++ b/meta-linaro-toolchain/recipes-core/eglibc/eglibc_linaro-2.19.bb
+@@ -31,6 +31,7 @@ SRC_URI = "http://cbuild.validation.linaro.org/snapshots/eglibc-${PV}-${RELEASE}
+            file://ppce6500-32b_slow_ieee754_sqrt.patch \
+            file://grok_gold.patch \
+            file://CVE-2014-5119.patch \
++           file://eglibc-disable-neon.patch \
+           "
+ 
+ SRC_URI[md5sum] = "4d9a406039cd33e14349a63773daac61"
+diff --git a/meta-linaro-toolchain/recipes-devtools/gcc/gcc-linaro-4.8.inc b/meta-linaro-toolchain/recipes-devtools/gcc/gcc-linaro-4.8.inc
+index 701bd11..d3f845a 100644
+--- a/meta-linaro-toolchain/recipes-devtools/gcc/gcc-linaro-4.8.inc
++++ b/meta-linaro-toolchain/recipes-devtools/gcc/gcc-linaro-4.8.inc
+@@ -60,7 +60,8 @@ SRC_URI = "https://releases.linaro.org/archive/${MMYY}/components/toolchain/gcc-
+ 	   file://0050-PR-target-58595.patch \
+ 	   file://use-lib-for-aarch64.patch \
+ 	   file://0001-AArch64-Define-BE-loader-name.patch \
+-           file://AArch64-Define-BE-loader-name-default-be.patch \
++	   file://AArch64-Define-BE-loader-name-default-be.patch \
++	   file://gcc-disable-neon.patch \
+ 	   "
+ 
+ SRC_URI[md5sum] = "5ba2f3a449b1658ccc09d27cc7ab3c03"
+diff --git a/meta-linaro-toolchain/recipes-devtools/gcc/gcc-linaro-4.8/gcc-disable-neon.patch b/meta-linaro-toolchain/recipes-devtools/gcc/gcc-linaro-4.8/gcc-disable-neon.patch
+new file mode 100644
+index 0000000..4a201af
+--- /dev/null
++++ b/meta-linaro-toolchain/recipes-devtools/gcc/gcc-linaro-4.8/gcc-disable-neon.patch
+@@ -0,0 +1,27 @@
++diff -Nur a/gcc/config/arm/arm.h b/gcc/config/arm/arm.h
++--- a/gcc/config/arm/arm.h	2018-04-25 12:21:29.994969086 +0200
+++++ b/gcc/config/arm/arm.h	2018-04-25 14:18:58.855768219 +0200
++@@ -2328,17 +2328,16 @@
++    point types.  Where bit 1 indicates 16-bit support, bit 2 indicates
++    32-bit support, bit 3 indicates 64-bit support.  */
++ #define TARGET_ARM_FP			\
++-  (TARGET_VFP_SINGLE ? 4		\
++-  		     : (TARGET_VFP_DOUBLE ? (TARGET_FP16 ? 14 : 12) : 0))
++-
+++  (!TARGET_SOFT_FLOAT ? (TARGET_VFP_SINGLE ? 4		\
+++			: (TARGET_VFP_DOUBLE ? (TARGET_FP16 ? 14 : 12) : 0)) \
+++		      : 0)
++ 
++ /* Set as a bit mask indicating the available widths of floating point
++    types for hardware NEON floating point.  This is the same as
++    TARGET_ARM_FP without the 64-bit bit set.  */
++-#ifdef TARGET_NEON
++-#define TARGET_NEON_FP		\
++-  (TARGET_ARM_FP & (0xff ^ 0x08))
++-#endif
+++#define TARGET_NEON_FP				 \
+++  (TARGET_NEON ? (TARGET_ARM_FP & (0xff ^ 0x08)) \
+++	       : 0)
++ 
++ /* The maximum number of parallel loads or stores we support in an ldm/stm
++    instruction.  */
