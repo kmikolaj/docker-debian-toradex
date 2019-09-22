@@ -4,6 +4,6 @@ set -x
 
 cd $(dirname $0)
 
-docker build --no-cache --rm -t kmikolaj/build-toradex .
+docker build --no-cache --rm -t kmikolaj/build-toradex:jessie .
 
 exit $?

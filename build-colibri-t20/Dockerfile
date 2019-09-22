@@ -1,4 +1,4 @@
-FROM kmikolaj/build-toradex
+FROM kmikolaj/build-toradex:jessie
 MAINTAINER Jakub Mikołajczyk <kmikolaj@gmail.com>
 
 # Run as user
