@@ -4,6 +4,6 @@ set -x
 
 cd $(dirname $0)
 
-docker build --no-cache --rm -t kmikolaj/build-colibri-t20:V2.3 .
+docker build --no-cache --rm -t kmikolaj/build-colibri-t20:V2.8 .
 
 exit $?

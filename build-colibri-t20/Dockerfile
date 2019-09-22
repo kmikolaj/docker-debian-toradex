@@ -1,4 +1,4 @@
-FROM kmikolaj/build-toradex
+FROM kmikolaj/build-toradex:stretch
 MAINTAINER Jakub Mikołajczyk <kmikolaj@gmail.com>
 
 # Run as user

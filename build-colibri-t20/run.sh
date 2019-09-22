@@ -4,7 +4,7 @@ cd $(dirname $0)
 
 SHARED=$HOME/workspace/build
 CONTAINER=build-colibri-t20
-IMAGE=kmikolaj/build-colibri-t20:V2.3
+IMAGE=kmikolaj/build-colibri-t20:V2.8
 
 if docker inspect $CONTAINER >/dev/null 2>&1; then
     echo -e "\nINFO: Reattaching to running container $CONTAINER\n"
