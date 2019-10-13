@@ -4,7 +4,7 @@
 
 Simple debian container made for building yocto image for [Toradex](https://www.toradex.com/) boards.
 
-In this case stable V2.3 Linux BSPs release for Colibri T20.
+In this case stable V2.8 Linux BSPs release for Colibri T20.
 
 More details: [here](https://developer.toradex.com/knowledge-base/board-support-package/openembedded-(core))
 
